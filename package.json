@@ -1,0 +1,25 @@
+{
+  "name": "sejong-golf-association",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "fs": "^0.0.1-security",
+    "method-override": "^3.0.0",
+    "moment-timezone": "^0.5.43",
+    "multer": "^1.4.5-lts.1",
+    "mysql2": "^3.3.0",
+    "nodemon": "^2.0.22",
+    "nunjucks": "^3.2.4",
+    "path": "^0.12.7",
+    "sequelize": "^6.31.1"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon app.js"
+  },
+  "author": "",
+  "license": "ISC"
+}
