@@ -16,9 +16,17 @@ router.post('/editContestPost', upload.uploadDocuments, boardController.editCont
 router.post('/editAnnouncementPost', upload.uploadDocuments, boardController.editAnnouncementPost);
 router.post('/editPhotoPost',  upload.uploadImages, boardController.editPhotoPost);
 
-// view (token X)
+// view Post (token X)
 router.get('/viewContestPost/:board_idx', boardController.viewContestPost); 
 router.get('/viewAnnouncementPost/:board_idx', boardController.viewAnnouncementPost); 
-router.get('/viewPhotoPost/:board_idx', boardController.viewPhotoPost); 
+router.get('/viewPhotoPost/:board_idx', boardController.viewPhotoPost); // view (token X)
+
+// view Board (token X)
+router.get('/viewContestBoard/:year/:limit/:page', boardController.viewContestBoard); 
+router.get('/viewAnnouncementBoard/:limit/:page', boardController.viewAnnouncementBoard); 
+router.get('/viewPhotoBoard/:limit/:page', boardController.viewPhotoBoard); 
+
+// search
+
  
 module.exports = router;

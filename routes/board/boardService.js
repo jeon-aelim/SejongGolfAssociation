@@ -1,6 +1,6 @@
 const moment = require('moment');
 const {
-    sequelize,
+    Sequelize : {Op},
     Board,
     Contest_intro,
     Img,
@@ -8,7 +8,8 @@ const {
 
 } = require('../../models');
 
-const throwError = async (err) => {
+const sendError = async (err) => {
+    //to omit duplicated code
 
     console.log("ERROR!");
     console.log(err);
@@ -17,7 +18,7 @@ const throwError = async (err) => {
 
     obj['suc'] = false;
     if (err.errors !== undefined) {
-        obj['error'] = err.errors[0].message;
+        obj['error'] = err.errors[0].message; // ex. 'error' : "error": "board.board_title cannot be null"
     }
 
     return obj;
@@ -34,7 +35,7 @@ const deletePost = async (boardIdx) => {
             }
         })
 
-        if (destroyPost == 0) {
+        if (destroyPost == 0) { // cannot find post with board_idx
             obj['suc'] = false;
             obj['error'] = "this idx does not exist. ";
         } else if (destroyPost == 1) {
@@ -43,7 +44,7 @@ const deletePost = async (boardIdx) => {
         return obj;
     } catch (err) {
 
-        return throwError(err)
+        return sendError(err)
     }
 
 };
@@ -51,10 +52,11 @@ const deletePost = async (boardIdx) => {
 const handleCreateError = async (err, boardIdx) => {
     await deletePost(boardIdx); // Deleting a previously created Board Record
 
-    return throwError(err);
+    return sendError(err);
 };
 
-const createContestTable = async (body, boardIdx) => {
+// create~Row
+const createContestRow = async (body, boardIdx) => {
 
     try {
         const contestIntro = await Contest_intro.create({
@@ -67,22 +69,22 @@ const createContestTable = async (body, boardIdx) => {
         return contestIntro;
     } catch (err) {
 
+        // create board row -> create that`s child contest row,
+        // if (contest row creation failed) { delete board row }
         return handleCreateError(err, boardIdx);
     }
 
 };
 
-const createImageTable = async (boardIdx, imgData) => {
+const createImageRow = async (boardIdx, imgData) => {
 
-
-    // to wait to create rows of all the files in the array
     try {
 
-        // Documents of this post 
         let images = [];
 
         for (let i = 0; i < imgData.length; i++) {
-            const image = await Img.create({
+            // to wait to create rows of all the files in the array
+            const image = await Img.create({   
                 img_url: imgData[i].path,
                 board_idx: boardIdx
             });
@@ -93,13 +95,15 @@ const createImageTable = async (boardIdx, imgData) => {
 
     } catch (err) {
 
+        // create board row -> create that`s child contest row,
+        // if (img table creation failed) { delete board row }
         return handleCreateError(err, boardIdx);
     }
 
 
 };
 
-const createDocumentTable = async (boardIdx, docType, docData) => {
+const createDocumentRow = async (boardIdx, docType, docData) => {
 
 
 
@@ -144,7 +148,8 @@ const createDocumentTable = async (boardIdx, docType, docData) => {
 
 };
 
-const editContestTable = async (body) => {
+// edit~Row
+const editContestRow = async (body) => {
 
     try {
         const contestIntro = await Contest_intro.update({
@@ -156,11 +161,12 @@ const editContestTable = async (body) => {
         return contestIntro[0];
     } catch (err) {
 
-        return throwError(err);
+        return sendError(err);
     }
 
 };
 
+// create~Post
 const createContestPost = async (body, docData) => {
 
 
@@ -173,17 +179,17 @@ const createContestPost = async (body, docData) => {
 
             board_title: body.board_title,
             board_content: body.board_content,
-            board_type: "대회일정",
+            board_type: "대회안내",
             board_date: moment().format("YYYY-MM-DD HH:mm:SS"),
             user_idx: body.user_idx
         })
 
-        const resultOfContest = await createContestTable(body, resultOfPost.board_idx);
+        const resultOfContest = await createContestRow(body, resultOfPost.board_idx);
 
         let combineObj = Object.assign({}, resultOfPost.dataValues, resultOfContest.dataValues);
 
         if (docData[0] != null) {
-            const resultOfDocument = await createDocumentTable(resultOfPost.board_idx, body.document_type, docData);
+            const resultOfDocument = await createDocumentRow(resultOfPost.board_idx, body.document_type, docData);
 
             combineObj = Object.assign(combineObj, { 'documents': resultOfDocument });
 
@@ -197,7 +203,7 @@ const createContestPost = async (body, docData) => {
 
     } catch (err) {
 
-        return throwError(err)
+        return sendError(err)
     }
 
 };
@@ -208,7 +214,7 @@ const createAnnouncementPost = async (body, docData) => {
     try {
 
 
-        let obj = {};
+        let obj = {}; // Object containing the result
 
         const resultOfPost = await Board.create({
             board_title: body.board_title,
@@ -222,7 +228,7 @@ const createAnnouncementPost = async (body, docData) => {
         obj['suc'] = true;
 
         if (docData[0] != null) {
-            const resultOfDocument = await createDocumentTable(resultOfPost.board_idx, "공지사항", docData);
+            const resultOfDocument = await createDocumentRow(resultOfPost.board_idx, "공지사항", docData);
 
             obj['result'] = Object.assign({}, resultOfPost.dataValues, { 'documents': resultOfDocument });;
 
@@ -234,7 +240,7 @@ const createAnnouncementPost = async (body, docData) => {
 
     } catch (err) {
 
-        return throwError(err)
+        return sendError(err)
     }
 
 };
@@ -244,7 +250,7 @@ const createPhotoPost = async (body, imgData) => {
 
     try {
 
-        let obj = {};
+        let obj = {}; // Object containing the result
 
         if (imgData[0] != null) {
 
@@ -255,7 +261,7 @@ const createPhotoPost = async (body, imgData) => {
                 board_date: moment().format("YYYY-MM-DD HH:mm:ss"),
                 user_idx: body.user_idx
             });
-            const resultOfImage = await createImageTable(resultOfPost.board_idx, imgData);
+            const resultOfImage = await createImageRow(resultOfPost.board_idx, imgData);
 
             obj['suc'] = true;
             obj['result'] = Object.assign({}, resultOfPost.dataValues, { 'images': resultOfImage });
@@ -270,10 +276,11 @@ const createPhotoPost = async (body, imgData) => {
 
     } catch (err) {
 
-        return throwError(err)
+        return sendError(err)
     }
 };
 
+// edit~Post
 const editContestPost = async (body, docData) => {
 
     try {
@@ -286,19 +293,18 @@ const editContestPost = async (body, docData) => {
             board_content: body.board_content
         }, { where: { board_idx: body.board_idx } })
 
-        await editContestTable(body);
+        await editContestRow(body);
+        
+        try {
+            await Document.destroy({
+                where: { board_idx: body.board_idx }
+            })
+        } catch (err) {
+            return sendError(err);
+        }
 
         if (docData[0] != null) {
-            
-            try {
-                await Document.destroy({
-                    where: { board_idx: body.board_idx }
-                })
-            } catch (err) {
-                return throwError(err);
-            }
-
-            await createDocumentTable(body.board_idx, body.document_type, docData);
+            await createDocumentRow(body.board_idx, body.document_type, docData);
         }
 
         obj['suc'] = true;
@@ -307,7 +313,7 @@ const editContestPost = async (body, docData) => {
 
     } catch (err) {
 
-        return throwError(err)
+        return sendError(err)
     }
 
 };
@@ -324,16 +330,17 @@ const editAnnouncementPost = async (body, docData) => {
             board_content: body.board_content
         }, { where: { board_idx: body.board_idx } })
 
-        if (docData[0] != null) {
-            try {
-                await Document.destroy({
-                    where: { board_idx: body.board_idx }
-                })
-            } catch (err) {
-                return throwError(err);
-            }
+        try {
+            await Document.destroy({
+                where: { board_idx: body.board_idx }
+            })
+        } catch (err) {
+            return sendError(err);
+        }
 
-            await createDocumentTable(body.board_idx, body.document_type, docData);
+        if (docData[0] != null) {
+
+            await createDocumentRow(body.board_idx, body.document_type, docData);
         }
 
         obj['suc'] = true;
@@ -342,7 +349,7 @@ const editAnnouncementPost = async (body, docData) => {
 
     } catch (err) {
 
-        return throwError(err)
+        return sendError(err)
     }
 };
 
@@ -358,17 +365,17 @@ const editPhotoPost = async (body, imgData) => {
             board_content: body.board_content
         }, { where: { board_idx: body.board_idx } })
 
+
+        try {
+            await Img.destroy({
+                where: { board_idx: body.board_idx }
+            })
+        } catch (err) {
+            return sendError(err);
+        }
+
         if (imgData[0] != null) {
-
-            try {
-                await Img.destroy({
-                    where: { board_idx: body.board_idx }
-                })
-            } catch (err) {
-                return throwError(err);
-            }
-
-            await createImageTable(body.board_idx, imgData);
+            await createImageRow(body.board_idx, imgData);
         }
 
         obj['suc'] = true;
@@ -377,11 +384,12 @@ const editPhotoPost = async (body, imgData) => {
 
     } catch (err) {
 
-        return throwError(err)
+        return sendError(err)
     }
 
 };
 
+// view~Post
 const viewContestPost = async (boardIdx) => {
 
     try {
@@ -407,7 +415,7 @@ const viewContestPost = async (boardIdx) => {
         return obj;
     } catch (err) {
 
-        return throwError(err)
+        return sendError(err)
     }
 
 };
@@ -436,7 +444,7 @@ const viewAnnouncementPost = async (boardIdx) => {
         return obj;
     } catch (err) {
 
-        return throwError(err)
+        return sendError(err)
     }
 
 };
@@ -465,7 +473,113 @@ const viewPhotoPost = async (boardIdx) => {
         return obj;
     } catch (err) {
 
-        return throwError(err)
+        return sendError(err)
+    }
+
+};
+
+// view~Board
+const viewContestBoard = async (year, offset, limit) => {
+
+    try {
+        let obj = {};
+        const resultOfPost = await Contest_intro.findAll({
+            where: {
+                contest_intro_start_date: {
+                     // between last day of last year and first day of next year 
+                     // (cannot use 'Op.contains')
+                    [Op.between]: [
+                        moment((year-1) + "-12-31 23:59:59").format("YYYY-MM-DD"),
+                        moment((year+1) + "-01-01 00:00:00").format("YYYY-MM-DD")
+                    ]
+                }
+            },
+            attributes : ['contest_intro_place', 'board_idx'],
+            include: {
+                model: Board,
+                attributes: ['board_title'],
+                include : { model : Document}
+            },
+            offset: parseInt(offset),
+            limit: parseInt(limit)
+        })
+
+        if (resultOfPost == null) {
+            obj['suc'] = false;
+            obj['error'] = "this year does not exist. ";
+        } else {
+            obj['suc'] = true;
+            obj['result'] = resultOfPost;
+        }
+        return obj;
+    } catch (err) {
+
+        return sendError(err)
+    }
+
+};
+
+const viewAnnouncementBoard = async (offset, limit) => {
+
+    try {
+
+        let obj = {};
+        const resultOfPost = await Board.findAll({
+            where: {
+                board_type : "공지사항"
+            },
+            attributes: ['board_idx', 'board_title', 'board_date'],
+            include : { model : Document},
+            offset: parseInt(offset),
+            limit: parseInt(limit)
+        })
+
+        if (resultOfPost == null) {
+            obj['suc'] = false;
+            obj['error'] = "not exist. ";
+        } else {
+            obj['suc'] = true;
+            obj['result'] = resultOfPost
+        }
+        return obj;
+    } catch (err) {
+
+        return sendError(err)
+    }
+
+};
+
+const viewPhotoBoard = async (offset, limit) => {
+
+    try {
+
+        let obj = {};
+        const resultOfPost = await Board.findAll({
+            where: {
+                board_type : "포토갤러리"
+            },
+            include : { 
+                // send first photo 
+                model : Img, 
+                order : [['img_idx','ASC']], 
+                limit : 1, 
+            },
+            attributes : ['board_idx', 'board_title', 'board_date'],
+            offset: parseInt(offset),
+            limit: parseInt(limit)
+        })
+
+        if (resultOfPost == null) {
+            obj['suc'] = false;
+            obj['error'] = "not exist. ";
+        } else {
+            obj['suc'] = true;
+            obj['result'] = resultOfPost
+        }
+        return obj;
+    } catch (err) {
+
+        return sendError(err)
     }
 
 };
@@ -480,5 +594,8 @@ module.exports = {
     editPhotoPost,
     viewContestPost,
     viewAnnouncementPost,
-    viewPhotoPost
+    viewPhotoPost,
+    viewContestBoard,
+    viewAnnouncementBoard,
+    viewPhotoBoard
 }
