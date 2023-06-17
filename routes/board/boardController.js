@@ -206,4 +206,36 @@ module.exports = {
             res.status(500).send({ error: "Internal Server Error" });
         }
     },
-}
+
+    countContest: async (req, res) => {
+        const year = req.params.year;
+
+        try {
+            const result = await boardService.countContest(year);
+            res.send(result);
+        } catch (error) {
+            console.log(error);
+            res.status(500).send({ error: "Internal Server Error" });
+        }
+    },
+
+    countAnnouncement: async (req, res) => {
+
+        try {
+            const result = await boardService.countAnnouncement();
+            res.send(result);
+        } catch (error) {
+            console.log(error);
+            res.status(500).send({ error: "Internal Server Error" });
+        }
+    },
+
+    countPhoto: async (req, res) => {
+        try {
+            const result = await boardService.countPhoto();
+            res.send(result);
+        } catch (error) {
+            console.log(error);
+            res.status(500).send({ error: "Internal Server Error" });
+        }
+    },}

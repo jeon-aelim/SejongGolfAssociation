@@ -695,6 +695,100 @@ const searchPhoto = async (searchWord, offset, limit) => {
 
 };
 
+// count 
+const countContest = async(year) => {
+
+    try {
+
+        let obj = {};
+        const numberOfContest = await Board.count({
+            where: {
+                board_type : "대회안내"
+            },
+            include : {
+                model : Contest_intro,
+                where: {
+                    contest_intro_start_date: {
+                        // between last day of last year and first day of next year 
+                        // (cannot use 'Op.contains')
+                       [Op.between]: [
+                           moment((year-1) + "-12-31 23:59:59").format("YYYY-MM-DD"),
+                           moment((year+1) + "-01-01 00:00:00").format("YYYY-MM-DD")
+                       ]
+                   }
+                }
+            }
+        })
+
+        if(numberOfContest == null ||numberOfContest == 0){
+            obj['suc'] = false;
+            obj['error'] = "not exist. ";
+        }else{
+            obj['suc'] = true;
+            obj['result'] = numberOfContest
+        }
+        return obj;
+
+    }catch (err) {
+
+        return sendError(err)
+    }
+
+};
+
+const countAnnouncement = async() => {
+
+    try {
+
+        let obj = {};
+        const numberOfContest = await Board.count({
+            where: {
+                board_type : "공지사항"
+            }
+        })
+
+        if(numberOfContest == null ||numberOfContest == 0){
+            obj['suc'] = false;
+            obj['error'] = "not exist. ";
+        }else{
+            obj['suc'] = true;
+            obj['result'] = numberOfContest
+        }
+        return obj;
+
+    }catch (err) {
+
+        return sendError(err)
+    }
+
+};
+
+const countPhoto = async() => {
+
+    try {
+
+        let obj = {};
+        const numberOfContest = await Board.count({
+            where: {
+                board_type : "포토갤러리"
+            }
+        })
+
+        if(numberOfContest == null ||numberOfContest == 0){
+            obj['suc'] = false;
+            obj['error'] = "not exist. ";
+        }else{
+            obj['suc'] = true;
+            obj['result'] = numberOfContest
+        }
+        return obj;
+
+    }catch (err) {
+
+        return sendError(err)
+    }
+
+}
 module.exports = {
     createContestPost,
     createAnnouncementPost,
@@ -711,5 +805,8 @@ module.exports = {
     viewPhotoBoard,
     searchContest,
     searchAnnouncement,
-    searchPhoto
+    searchPhoto,
+    countContest,
+    countAnnouncement,
+    countPhoto
 }
