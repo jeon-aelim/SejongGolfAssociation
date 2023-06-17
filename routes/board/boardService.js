@@ -584,6 +584,117 @@ const viewPhotoBoard = async (offset, limit) => {
 
 };
 
+// search
+const searchContest =  async (searchWord, year, offset, limit) => {
+
+    try {
+        let obj = {};
+        const resultOfPost = await Contest_intro.findAll({
+            where: {
+                contest_intro_start_date: {
+                     // between last day of last year and first day of next year 
+                     // (cannot use 'Op.contains')
+                    [Op.between]: [
+                        moment((year-1) + "-12-31 23:59:59").format("YYYY-MM-DD"),
+                        moment((year+1) + "-01-01 00:00:00").format("YYYY-MM-DD")
+                    ]
+                },
+            },
+            attributes : ['contest_intro_place', 'board_idx'],
+            include: {
+                model: Board,
+                attributes: ['board_title'],
+                include : { model : Document},
+                where: {
+                    board_title: {[Op.like]: "%" + searchWord + "%"}
+                }
+            },
+            offset: parseInt(offset),
+            limit: parseInt(limit)
+        })
+
+        if (resultOfPost == null) {
+            obj['suc'] = false;
+            obj['error'] = "this year does not exist. ";
+        } else {
+            obj['suc'] = true;
+            obj['result'] = resultOfPost;
+        }
+        return obj;
+    } catch (err) {
+
+        return sendError(err)
+    }
+
+};
+
+const searchAnnouncement = async (searchWord, offset, limit) => {
+
+    try {
+
+        let obj = {};
+        const resultOfPost = await Board.findAll({
+            where: {
+                board_type : "공지사항",
+                board_title: {[Op.like]: "%" + searchWord + "%"}
+            },
+            attributes: ['board_idx', 'board_title', 'board_date'],
+            include : { model : Document},
+            offset: parseInt(offset),
+            limit: parseInt(limit)
+        })
+
+        if (resultOfPost == null) {
+            obj['suc'] = false;
+            obj['error'] = "not exist. ";
+        } else {
+            obj['suc'] = true;
+            obj['result'] = resultOfPost
+        }
+        return obj;
+    } catch (err) {
+
+        return sendError(err)
+    }
+
+};
+
+const searchPhoto = async (searchWord, offset, limit) => {
+
+    try {
+
+        let obj = {};
+        const resultOfPost = await Board.findAll({
+            where: {
+                board_type : "포토갤러리",
+                board_title: {[Op.like]: "%" + searchWord + "%"}
+            },
+            include : { 
+                // send first photo 
+                model : Img, 
+                order : [['img_idx','ASC']], 
+                limit : 1, 
+            },
+            attributes : ['board_idx', 'board_title', 'board_date'],
+            offset: parseInt(offset),
+            limit: parseInt(limit)
+        })
+
+        if (resultOfPost == null) {
+            obj['suc'] = false;
+            obj['error'] = "not exist. ";
+        } else {
+            obj['suc'] = true;
+            obj['result'] = resultOfPost
+        }
+        return obj;
+    } catch (err) {
+
+        return sendError(err)
+    }
+
+};
+
 module.exports = {
     createContestPost,
     createAnnouncementPost,
@@ -597,5 +708,8 @@ module.exports = {
     viewPhotoPost,
     viewContestBoard,
     viewAnnouncementBoard,
-    viewPhotoBoard
+    viewPhotoBoard,
+    searchContest,
+    searchAnnouncement,
+    searchPhoto
 }

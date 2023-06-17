@@ -163,4 +163,47 @@ module.exports = {
         }
     },
 
+    searchContest: async (req, res) => {
+        const searchWord = req.params.search_word;
+        const year = req.params.year;
+        const limit =  req.params.limit;
+        const offset = limit * ( req.params.page - 1);
+        
+        try {
+            const result = await boardService.searchContest(searchWord, year, offset, limit);
+            res.send(result);
+        } catch (error) {
+            console.log(error);
+            res.status(500).send({ error: "Internal Server Error" });
+        }
+    },
+
+    
+    searchAnnouncement: async (req, res) => {
+        const searchWord = req.params.search_word;
+        const limit =  req.params.limit;
+        const offset = limit * ( req.params.page - 1);
+
+        try {
+            const result = await boardService.searchAnnouncement(searchWord, offset, limit);
+            res.send(result);
+        } catch (error) {
+            console.log(error);
+            res.status(500).send({ error: "Internal Server Error" });
+        }
+    },
+
+    searchPhoto: async (req, res) => {
+        const searchWord = req.params.search_word;
+        const limit =  req.params.limit;
+        const offset = limit * ( req.params.page - 1);
+
+        try {
+            const result = await boardService.searchPhoto(searchWord, offset, limit);
+            res.send(result);
+        } catch (error) {
+            console.log(error);
+            res.status(500).send({ error: "Internal Server Error" });
+        }
+    },
 }

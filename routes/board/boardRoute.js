@@ -27,6 +27,9 @@ router.get('/viewAnnouncementBoard/:limit/:page', boardController.viewAnnounceme
 router.get('/viewPhotoBoard/:limit/:page', boardController.viewPhotoBoard); 
 
 // search
+router.get('/searchContest/:search_word/:year/:limit/:page', boardController.searchContest); 
+router.get('/searchAnnouncement/:search_word/:limit/:page', boardController.searchAnnouncement); 
+router.get('/searchPhoto/:search_word/:limit/:page', boardController.searchPhoto); 
 
  
 module.exports = router;
