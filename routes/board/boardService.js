@@ -494,7 +494,7 @@ const viewContestBoard = async (year, offset, limit) => {
                     ]
                 }
             },
-            attributes : ['contest_intro_place', 'board_idx'],
+            attributes : ['contest_intro_start_date', 'contest_intro_end_date','contest_intro_place', 'board_idx'],
             include: {
                 model: Board,
                 attributes: ['board_title'],
