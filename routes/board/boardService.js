@@ -4,7 +4,8 @@ const {
     Board,
     Contest_intro,
     Img,
-    Document
+    Document,
+    User
 
 } = require('../../models');
 
@@ -478,6 +479,204 @@ const viewPhotoPost = async (boardIdx) => {
 
 };
 
+// view Previous Post
+const viewPreviousContestPost = async (boardIdx) => {
+
+    try {
+
+        let obj = {};
+        const resultOfPost = await Board.findAll({
+            where: {
+                board_idx: { [Op.lt] : boardIdx },
+                board_type : "대회안내"
+            },
+            order:[ ['board_idx','DESC']],
+            include : [
+                {model : Document},
+                {model : User, attributes: ['user_name']}
+            ],
+            limit : 1,
+        })
+
+        if (resultOfPost[0] == null) {
+            obj['suc'] = false;
+            obj['error'] = "previous post does not exist. ";
+        } else {
+            obj['suc'] = true;
+            obj['result'] = resultOfPost[0]
+        }
+        return obj;
+    } catch (err) {
+
+        return sendError(err)
+    }
+
+};
+
+const viewPreviousAnnouncementPost = async (boardIdx) => {
+
+    try {
+
+        let obj = {};
+        const resultOfPost = await Board.findAll({
+            where: {
+                board_idx: { [Op.lt] : boardIdx },
+                board_type : "공지사항"
+            },
+            order:[ ['board_idx','DESC']],
+            include : [
+                {model : Document},
+                {model : User, attributes: ['user_name']}
+            ],
+            limit : 1,
+        })
+
+        if (resultOfPost[0] == null) {
+            obj['suc'] = false;
+            obj['error'] = "previous post does not exist. ";
+        } else {
+            obj['suc'] = true;
+            obj['result'] = resultOfPost[0]
+        }
+        return obj;
+    } catch (err) {
+
+        return sendError(err)
+    }
+
+};
+
+const viewPreviousPhotoPost = async (boardIdx) => {
+
+    try {
+
+        let obj = {};
+        const resultOfPost = await Board.findAll({
+            where: {
+                board_idx: { [Op.lt] : boardIdx },
+                board_type : "포토갤러리"
+            },
+            order:[ ['board_idx','DESC']],
+            include : [
+                {model : User, attributes: ['user_name']}
+            ],
+            limit : 1,
+        })
+
+        if (resultOfPost[0] == null) {
+            obj['suc'] = false;
+            obj['error'] = "previous post does not exist. ";
+        } else {
+            obj['suc'] = true;
+            obj['result'] = resultOfPost[0]
+        }
+        return obj;
+    } catch (err) {
+
+        return sendError(err)
+    }
+
+};
+
+// view Next Post
+const viewNextContestPost = async (boardIdx) => {
+
+    try {
+
+        let obj = {};
+        const resultOfPost = await Board.findAll({
+            where: {
+                board_idx: { [Op.gt] : boardIdx },
+                board_type : "대회안내"
+            },
+            order:[ ['board_idx','ASC']],
+            include : [
+                {model : Document},
+                {model : User, attributes: ['user_name']}
+            ],
+            limit : 1
+        })
+
+        if (resultOfPost[0] == null) {
+            obj['suc'] = false;
+            obj['error'] = "next post does not exist. ";
+        } else {
+            obj['suc'] = true;
+            obj['result'] = resultOfPost[0]
+        }
+        return obj;
+    } catch (err) {
+
+        return sendError(err)
+    }
+
+};
+
+const viewNextAnnouncementPost = async (boardIdx) => {
+
+    try {
+
+        let obj = {};
+        const resultOfPost = await Board.findAll({
+            where: {
+                board_idx: { [Op.gt] : boardIdx },
+                board_type : "공지사항"
+            },
+            order:[ ['board_idx','ASC']],
+            include : [
+                {model : Document},
+                {model : User, attributes: ['user_name']}
+            ],
+            limit : 1,
+        })
+
+        if (resultOfPost[0] == null) {
+            obj['suc'] = false;
+            obj['error'] = "next post does not exist. ";
+        } else {
+            obj['suc'] = true;
+            obj['result'] = resultOfPost[0]
+        }
+        return obj;
+    } catch (err) {
+
+        return sendError(err)
+    }
+
+};
+
+const viewNextPhotoPost = async (boardIdx) => {
+
+    try {
+
+        let obj = {};
+        const resultOfPost = await Board.findAll({
+            where: {
+                board_idx: { [Op.gt] : boardIdx },
+                board_type : "포토갤러리"
+            },
+            order:[ ['board_idx','ASC']],
+            include : [
+                {model : User, attributes: ['user_name']}
+            ],
+            limit : 1,
+        })
+
+        if (resultOfPost[0] == null) {
+            obj['suc'] = false;
+            obj['error'] = "next post does not exist. ";
+        } else {
+            obj['suc'] = true;
+            obj['result'] = resultOfPost[0]
+        }
+        return obj;
+    } catch (err) {
+
+        return sendError(err)
+    }
+
+};
+
 // view~Board
 const viewContestBoard = async (year, offset, limit) => {
 
@@ -808,5 +1007,11 @@ module.exports = {
     searchPhoto,
     countContest,
     countAnnouncement,
-    countPhoto
+    countPhoto,
+    viewPreviousContestPost,
+    viewPreviousAnnouncementPost,
+    viewPreviousPhotoPost,
+    viewNextContestPost,
+    viewNextAnnouncementPost,
+    viewNextPhotoPost
 }

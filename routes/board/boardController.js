@@ -123,6 +123,78 @@ module.exports = {
         }
     },
 
+    viewPreviousContestPost: async (req, res) => {
+        const boardIdx = req.params.board_idx;
+
+        try {
+            const result = await boardService.viewPreviousContestPost(boardIdx);
+            res.send(result);
+        } catch (error) {
+            console.log(error);
+            res.status(500).send({ error: "Internal Server Error" });
+        }
+    },
+
+    viewPreviousAnnouncementPost: async (req, res) => {
+        const boardIdx = req.params.board_idx;
+
+        try {
+            const result = await boardService.viewPreviousAnnouncementPost(boardIdx);
+            res.send(result);
+        } catch (error) {
+            console.log(error);
+            res.status(500).send({ error: "Internal Server Error" });
+        }
+    },
+    
+    viewPreviousPhotoPost: async (req, res) => {
+        const boardIdx = req.params.board_idx;
+
+        try {
+            const result = await boardService.viewPreviousPhotoPost(boardIdx);
+            res.send(result);
+        } catch (error) {
+            console.log(error);
+            res.status(500).send({ error: "Internal Server Error" });
+        }
+    },
+
+    viewNextContestPost: async (req, res) => {
+        const boardIdx = req.params.board_idx;
+
+        try {
+            const result = await boardService.viewNextContestPost(boardIdx);
+            res.send(result);
+        } catch (error) {
+            console.log(error);
+            res.status(500).send({ error: "Internal Server Error" });
+        }
+    },
+
+    viewNextAnnouncementPost: async (req, res) => {
+        const boardIdx = req.params.board_idx;
+
+        try {
+            const result = await boardService.viewNextAnnouncementPost(boardIdx);
+            res.send(result);
+        } catch (error) {
+            console.log(error);
+            res.status(500).send({ error: "Internal Server Error" });
+        }
+    },
+
+    viewNextPhotoPost: async (req, res) => {
+        const boardIdx = req.params.board_idx;
+
+        try {
+            const result = await boardService.viewNextPhotoPost(boardIdx);
+            res.send(result);
+        } catch (error) {
+            console.log(error);
+            res.status(500).send({ error: "Internal Server Error" });
+        }
+    },
+
     viewContestBoard: async (req, res) => {
         const year = req.params.year;
         const limit =  req.params.limit;
