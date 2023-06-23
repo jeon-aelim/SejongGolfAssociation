@@ -19,6 +19,11 @@ module.exports = (sequelize, DataTypes) => {
         contest_intro_place:{
             type:DataTypes.STRING(1500),
             allowNull:false,
+        },
+
+        contest_intro_year: {
+          type:DataTypes.STRING(150),
+          allowNull:false,
         }
   },
   
