@@ -64,6 +64,7 @@ const createContestRow = async (body, boardIdx) => {
             contest_intro_start_date: body.contest_intro_start_date,
             contest_intro_end_date: body.contest_intro_end_date,
             contest_intro_place: body.contest_intro_place,
+            contest_intro_year: body.contest_intro_year,
             board_idx: boardIdx
         })
 
@@ -157,6 +158,7 @@ const editContestRow = async (body) => {
             contest_intro_start_date: body.contest_intro_start_date,
             contest_intro_end_date: body.contest_intro_end_date,
             contest_intro_place: body.contest_intro_place,
+            contest_intro_year: body.contest_intro_year,
         }, { where: { board_idx: body.board_idx } })
 
         return contestIntro[0];
@@ -684,9 +686,7 @@ const viewContestBoard = async (year, offset, limit) => {
         let obj = {};
         const resultOfPost = await Contest_intro.findAll({
             where: {
-                contest_intro_start_date: {
-                    [Op.like]: year + "%"
-                }
+                contest_intro_year: year
             },
             attributes : ['contest_intro_start_date', 'contest_intro_end_date','contest_intro_place', 'board_idx'],
             include: {
@@ -785,16 +785,9 @@ const searchContest =  async (searchWord, year, offset, limit) => {
         let obj = {};
         const resultOfPost = await Contest_intro.findAll({
             where: {
-                contest_intro_start_date: {
-                     // between last day of last year and first day of next year 
-                     // (cannot use 'Op.contains')
-                    [Op.between]: [
-                        moment((year-1) + "-12-31 23:59:59").format("YYYY-MM-DD"),
-                        moment((year+1) + "-01-01 00:00:00").format("YYYY-MM-DD")
-                    ]
-                },
+                contest_intro_year: year
             },
-            attributes : ['contest_intro_place', 'board_idx'],
+            attributes : ['contest_intro_start_date', 'contest_intro_end_date','contest_intro_place', 'board_idx'],
             include: {
                 model: Board,
                 attributes: ['board_title'],
@@ -902,14 +895,7 @@ const countContest = async(year) => {
             include : {
                 model : Contest_intro,
                 where: {
-                    contest_intro_start_date: {
-                        // between last day of last year and first day of next year 
-                        // (cannot use 'Op.contains')
-                       [Op.between]: [
-                           moment((year-1) + "-12-31 23:59:59").format("YYYY-MM-DD"),
-                           moment((year+1) + "-01-01 00:00:00").format("YYYY-MM-DD")
-                       ]
-                   }
+                    contest_intro_year : year
                 }
             }
         })
