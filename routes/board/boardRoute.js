@@ -46,5 +46,7 @@ router.get('/searchContest/:search_word/:year/:limit/:page', boardController.sea
 router.get('/searchAnnouncement/:search_word/:limit/:page', boardController.searchAnnouncement); 
 router.get('/searchPhoto/:search_word/:limit/:page', boardController.searchPhoto); 
 
- 
+// preview
+router.get('previewContest', boardController.previewContest);
+router.get('previewAnnouncement', boardController.previewAnnouncement);
 module.exports = router;

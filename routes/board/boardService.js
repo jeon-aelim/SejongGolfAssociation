@@ -685,12 +685,7 @@ const viewContestBoard = async (year, offset, limit) => {
         const resultOfPost = await Contest_intro.findAll({
             where: {
                 contest_intro_start_date: {
-                     // between last day of last year and first day of next year 
-                     // (cannot use 'Op.contains')
-                    [Op.between]: [
-                        moment((year-1) + "-12-31 23:59:59").format("YYYY-MM-DD"),
-                        moment((year+1) + "-01-01 00:00:00").format("YYYY-MM-DD")
-                    ]
+                    [Op.like]: year + "%"
                 }
             },
             attributes : ['contest_intro_start_date', 'contest_intro_end_date','contest_intro_place', 'board_idx'],
@@ -988,6 +983,60 @@ const countPhoto = async() => {
     }
 
 }
+
+// preview
+const previewContest = async() => {
+
+    try{
+        let obj={};
+        const preview = await Board.findAll({
+            where: {
+                board_type : "대회안내"
+            },
+            order:[['board_idx', 'DESC']],
+            limit: 3
+        })
+
+        if(preview == null){
+            obj['suc'] = false;
+            obj['error'] = "not exist. ";
+        }else{
+            obj['suc'] = true;
+            obj['result'] = preview
+        }
+        return obj;
+
+    }catch (err) {
+
+        return sendError(err)
+    }
+}
+
+const previewAnnouncement = async() => {
+
+    try{
+        let obj ={};
+        const preview = await Board.findAll({
+            where: {
+                board_type : "공지사항"
+            },
+            order: [['board_idx', 'DESC']],
+            limit :3
+        })
+
+        if(preview == null){
+            obj['suc'] = false;
+            obj['error'] = "not exist. ";
+        }else{
+            obj['suc'] = true;
+            obj['result'] = preview;
+        }
+
+        return obj;
+    }catch(err){
+        return sendError(err)
+    }
+}
 module.exports = {
     createContestPost,
     createAnnouncementPost,
@@ -1013,5 +1062,7 @@ module.exports = {
     viewPreviousPhotoPost,
     viewNextContestPost,
     viewNextAnnouncementPost,
-    viewNextPhotoPost
+    viewNextPhotoPost,
+    previewContest,
+    previewAnnouncement
 }

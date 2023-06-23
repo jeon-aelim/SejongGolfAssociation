@@ -1,5 +1,11 @@
 const boardService = require('./boardService');
 
+const sendError = (error) => {
+    console.log(error);
+    res.status(500).send({ error: "Internal Server Error" });
+}
+
+
 module.exports = {
     createContestPost: async (req, res) => {
         const body = req.body;
@@ -8,8 +14,7 @@ module.exports = {
             const result = await boardService.createContestPost(body, req.files);
             res.send(result);
         } catch (error) {
-            console.log(error);
-            res.status(500).send({ error: "Internal Server Error" });
+            sendError(error);
         }
     },
 
@@ -22,8 +27,7 @@ module.exports = {
             const result = await boardService.createAnnouncementPost(body, req.files);
             res.send(result);
         } catch (error) {
-            console.log(error);
-            res.status(500).send({ error: "Internal Server Error" });
+            sendError(error);
         }
     },
 
@@ -34,8 +38,7 @@ module.exports = {
             const result = await boardService.createPhotoPost(body, req.files);
             res.send(result);
         } catch (error) {
-            console.log(error);
-            res.status(500).send({ error: "Internal Server Error" });
+            sendError(error);
         }
     },
 
@@ -47,8 +50,7 @@ module.exports = {
             res.send(result);
 
         } catch (error) {
-            console.log(error);
-            res.status(500).send({ error: "Internal Server Error" });
+            sendError(error);
         }
     },
 
@@ -60,8 +62,7 @@ module.exports = {
             res.send(result);
 
         } catch (error) {
-            console.log(error);
-            res.status(500).send({ error: "Internal Server Error" });
+            sendError(error);
         }
     },
 
@@ -73,8 +74,7 @@ module.exports = {
             res.send(result);
 
         } catch (error) {
-            console.log(error);
-            res.status(500).send({ error: "Internal Server Error" });
+            sendError(error);
         }
     },
 
@@ -84,8 +84,7 @@ module.exports = {
             const result = await boardService.deletePost(boardIdx);
             res.send(result);
         } catch (error) {
-            console.log(error);
-            res.status(500).send({ error: "Internal Server Error" });
+            sendError(error);
         }
     },
 
@@ -96,8 +95,7 @@ module.exports = {
             const result = await boardService.viewContestPost(boardIdx);
             res.send(result);
         } catch (error) {
-            console.log(error);
-            res.status(500).send({ error: "Internal Server Error" });
+            sendError(error);
         }
     },
 
@@ -107,8 +105,7 @@ module.exports = {
             const result = await boardService.viewAnnouncementPost(boardIdx);
             res.send(result);
         } catch (error) {
-            console.log(error);
-            res.status(500).send({ error: "Internal Server Error" });
+            sendError(error);
         }
     },
 
@@ -118,8 +115,7 @@ module.exports = {
             const result = await boardService.viewPhotoPost(boardIdx);
             res.send(result);
         } catch (error) {
-            console.log(error);
-            res.status(500).send({ error: "Internal Server Error" });
+            sendError(error);
         }
     },
 
@@ -130,8 +126,7 @@ module.exports = {
             const result = await boardService.viewPreviousContestPost(boardIdx);
             res.send(result);
         } catch (error) {
-            console.log(error);
-            res.status(500).send({ error: "Internal Server Error" });
+            sendError(error);
         }
     },
 
@@ -142,8 +137,7 @@ module.exports = {
             const result = await boardService.viewPreviousAnnouncementPost(boardIdx);
             res.send(result);
         } catch (error) {
-            console.log(error);
-            res.status(500).send({ error: "Internal Server Error" });
+            sendError(error);
         }
     },
     
@@ -154,8 +148,7 @@ module.exports = {
             const result = await boardService.viewPreviousPhotoPost(boardIdx);
             res.send(result);
         } catch (error) {
-            console.log(error);
-            res.status(500).send({ error: "Internal Server Error" });
+            sendError(error);
         }
     },
 
@@ -166,8 +159,7 @@ module.exports = {
             const result = await boardService.viewNextContestPost(boardIdx);
             res.send(result);
         } catch (error) {
-            console.log(error);
-            res.status(500).send({ error: "Internal Server Error" });
+            sendError(error);
         }
     },
 
@@ -178,8 +170,7 @@ module.exports = {
             const result = await boardService.viewNextAnnouncementPost(boardIdx);
             res.send(result);
         } catch (error) {
-            console.log(error);
-            res.status(500).send({ error: "Internal Server Error" });
+            sendError(error);
         }
     },
 
@@ -190,8 +181,7 @@ module.exports = {
             const result = await boardService.viewNextPhotoPost(boardIdx);
             res.send(result);
         } catch (error) {
-            console.log(error);
-            res.status(500).send({ error: "Internal Server Error" });
+            sendError(error);
         }
     },
 
@@ -204,8 +194,7 @@ module.exports = {
             const result = await boardService.viewContestBoard(year, offset, limit);
             res.send(result);
         } catch (error) {
-            console.log(error);
-            res.status(500).send({ error: "Internal Server Error" });
+            sendError(error);
         }
     },
 
@@ -217,8 +206,7 @@ module.exports = {
             const result = await boardService.viewAnnouncementBoard(offset, limit);
             res.send(result);
         } catch (error) {
-            console.log(error);
-            res.status(500).send({ error: "Internal Server Error" });
+            sendError(error);
         }
     },
 
@@ -230,8 +218,7 @@ module.exports = {
             const result = await boardService.viewPhotoBoard(offset, limit);
             res.send(result);
         } catch (error) {
-            console.log(error);
-            res.status(500).send({ error: "Internal Server Error" });
+            sendError(error);
         }
     },
 
@@ -245,8 +232,7 @@ module.exports = {
             const result = await boardService.searchContest(searchWord, year, offset, limit);
             res.send(result);
         } catch (error) {
-            console.log(error);
-            res.status(500).send({ error: "Internal Server Error" });
+            sendError(error);
         }
     },
 
@@ -260,8 +246,7 @@ module.exports = {
             const result = await boardService.searchAnnouncement(searchWord, offset, limit);
             res.send(result);
         } catch (error) {
-            console.log(error);
-            res.status(500).send({ error: "Internal Server Error" });
+            sendError(error);
         }
     },
 
@@ -274,8 +259,7 @@ module.exports = {
             const result = await boardService.searchPhoto(searchWord, offset, limit);
             res.send(result);
         } catch (error) {
-            console.log(error);
-            res.status(500).send({ error: "Internal Server Error" });
+            sendError(error);
         }
     },
 
@@ -286,8 +270,7 @@ module.exports = {
             const result = await boardService.countContest(year);
             res.send(result);
         } catch (error) {
-            console.log(error);
-            res.status(500).send({ error: "Internal Server Error" });
+            sendError(error);
         }
     },
 
@@ -297,8 +280,7 @@ module.exports = {
             const result = await boardService.countAnnouncement();
             res.send(result);
         } catch (error) {
-            console.log(error);
-            res.status(500).send({ error: "Internal Server Error" });
+            sendError(error);
         }
     },
 
@@ -307,7 +289,20 @@ module.exports = {
             const result = await boardService.countPhoto();
             res.send(result);
         } catch (error) {
-            console.log(error);
-            res.status(500).send({ error: "Internal Server Error" });
+            sendError(error);
         }
-    },}
+    },
+
+    previewContest: async (req, res) => {
+        try{
+            const result = await boardService.previewContest();
+            res.send(result);
+
+        }catch(error){
+            sendError(error);
+        }
+    }
+
+    
+
+}
