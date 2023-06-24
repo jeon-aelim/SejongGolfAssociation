@@ -47,6 +47,6 @@ router.get('/searchAnnouncement/:search_word/:limit/:page', boardController.sear
 router.get('/searchPhoto/:search_word/:limit/:page', boardController.searchPhoto); 
 
 // preview
-router.get('previewContest', boardController.previewContest);
-router.get('previewAnnouncement', boardController.previewAnnouncement);
+router.get('/previewContest', boardController.previewContest);
+router.get('/previewAnnouncement', boardController.previewAnnouncement);
 module.exports = router;

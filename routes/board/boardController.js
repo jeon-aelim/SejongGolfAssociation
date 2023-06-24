@@ -301,6 +301,16 @@ module.exports = {
         }catch(error){
             sendError(error);
         }
+    },
+
+    previewAnnouncement: async (req, res) => {
+        try{
+            const result = await boardService.previewAnnouncement();
+            res.send(result);
+
+        }catch(error){
+            sendError(error);
+        }
     }
 
     

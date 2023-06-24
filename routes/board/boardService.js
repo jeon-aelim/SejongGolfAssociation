@@ -191,7 +191,7 @@ const createContestPost = async (body, docData) => {
 
         let combineObj = Object.assign({}, resultOfPost.dataValues, resultOfContest.dataValues);
 
-        if (docData[0] != null) {
+        if (docData != undefined) {
             const resultOfDocument = await createDocumentRow(resultOfPost.board_idx, body.document_type, docData);
 
             combineObj = Object.assign(combineObj, { 'documents': resultOfDocument });
@@ -229,8 +229,8 @@ const createAnnouncementPost = async (body, docData) => {
 
 
         obj['suc'] = true;
-
-        if (docData[0] != null) {
+        console.log(docData)
+        if (docData != undefined) {
             const resultOfDocument = await createDocumentRow(resultOfPost.board_idx, "공지사항", docData);
 
             obj['result'] = Object.assign({}, resultOfPost.dataValues, { 'documents': resultOfDocument });;
@@ -255,7 +255,7 @@ const createPhotoPost = async (body, imgData) => {
 
         let obj = {}; // Object containing the result
 
-        if (imgData[0] != null) {
+        if (imgData != undefined) {
 
             const resultOfPost = await Board.create({
                 board_title: body.board_title,
@@ -306,7 +306,7 @@ const editContestPost = async (body, docData) => {
             return sendError(err);
         }
 
-        if (docData[0] != null) {
+        if (docData != undefined) {
             await createDocumentRow(body.board_idx, body.document_type, docData);
         }
 
@@ -341,7 +341,7 @@ const editAnnouncementPost = async (body, docData) => {
             return sendError(err);
         }
 
-        if (docData[0] != null) {
+        if (docData != undefined) {
 
             await createDocumentRow(body.board_idx, body.document_type, docData);
         }
@@ -377,7 +377,7 @@ const editPhotoPost = async (body, imgData) => {
             return sendError(err);
         }
 
-        if (imgData[0] != null) {
+        if (imgData != undefined) {
             await createImageRow(body.board_idx, imgData);
         }
 
